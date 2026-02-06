@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from functools import wraps
 import os
 
 app = Flask(__name__)
@@ -21,6 +22,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(100), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def set_password(self, password):
@@ -32,6 +34,16 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+# Admin decorator
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            flash('ليس لديك صلاحية للوصول لهذه الصفحة', 'error')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Create tables
 with app.app_context():
@@ -85,7 +97,10 @@ def signup():
             flash('البريد الإلكتروني مستخدم بالفعل', 'error')
             return render_template('signup.html')
         
-        user = User(name=name, email=email)
+        # First user becomes admin
+        is_first_user = User.query.count() == 0
+        
+        user = User(name=name, email=email, is_admin=is_first_user)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
@@ -102,6 +117,50 @@ def logout():
     logout_user()
     flash('تم تسجيل الخروج بنجاح', 'success')
     return redirect(url_for('index'))
+
+# Dashboard Routes
+@app.route('/dashboard')
+@login_required
+@admin_required
+def dashboard():
+    users = User.query.order_by(User.created_at.desc()).all()
+    stats = {
+        'total_users': User.query.count(),
+        'admin_count': User.query.filter_by(is_admin=True).count(),
+        'today_signups': User.query.filter(
+            User.created_at >= datetime.utcnow().replace(hour=0, minute=0, second=0)
+        ).count()
+    }
+    return render_template('dashboard.html', users=users, stats=stats)
+
+@app.route('/dashboard/delete/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_user(user_id):
+    if user_id == current_user.id:
+        flash('لا يمكنك حذف حسابك الخاص', 'error')
+        return redirect(url_for('dashboard'))
+    
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash(f'تم حذف المستخدم {user.name}', 'success')
+    return redirect(url_for('dashboard'))
+
+@app.route('/dashboard/toggle-admin/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def toggle_admin(user_id):
+    if user_id == current_user.id:
+        flash('لا يمكنك تغيير صلاحياتك الخاصة', 'error')
+        return redirect(url_for('dashboard'))
+    
+    user = User.query.get_or_404(user_id)
+    user.is_admin = not user.is_admin
+    db.session.commit()
+    status = 'مسؤول' if user.is_admin else 'مستخدم عادي'
+    flash(f'تم تغيير {user.name} إلى {status}', 'success')
+    return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
