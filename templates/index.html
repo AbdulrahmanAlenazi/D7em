@@ -218,7 +218,15 @@
                 <span style="font-size: 30px;">🔢</span>
                 حاسبة.برو
             </a>
-            <a href="/calculator" class="cta-button">ابدأ الحساب</a>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                {% if current_user.is_authenticated %}
+                <span style="color: var(--text-light);">مرحباً، {{ current_user.name }}</span>
+                <a href="/logout" style="color: var(--text-light); text-decoration: none;">خروج</a>
+                {% else %}
+                <a href="/login" style="color: var(--text-light); text-decoration: none; font-weight: 500;">دخول</a>
+                <a href="/signup" class="cta-button" style="padding: 10px 20px;">إنشاء حساب</a>
+                {% endif %}
+            </div>
         </header>
 
         <section class="hero">
