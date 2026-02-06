@@ -322,6 +322,7 @@
             <a href="/" class="logo">حاسبة.برو</a>
             <div class="nav-actions">
                 {% if current_user.is_authenticated %}
+                    <a href="/tracker">المتابع المالي</a>
                     <a href="/profile">{{ current_user.name }}</a>
                     {% if current_user.is_admin %}
                         <a href="/dashboard">لوحة التحكم</a>
