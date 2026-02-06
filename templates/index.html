@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الحاسبة العلمية المتقدمة | Advanced Scientific Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0984e3;
+            --secondary: #00b894;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --bg-light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-button {
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(9, 132, 227, 0.2);
+            background: #0776cc;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            max-width: 500px;
+        }
+
+        .hero-visual {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .calc-mockup {
+            width: 320px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border: 1px solid #eee;
+            transform: rotate(-3deg);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: rotate(-3deg) translateY(0);
+            }
+
+            50% {
+                transform: rotate(-3deg) translateY(-20px);
+            }
+        }
+
+        /* Features */
+        .features {
+            padding: 60px 0 100px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(9, 132, 227, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 24px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+            font-size: 14px;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 40px 0;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .calc-mockup {
+                width: 280px;
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="logo">
+                <span style="font-size: 30px;">🔢</span>
+                حاسبة.برو
+            </a>
+            <a href="/calculator" class="cta-button">ابدأ الحساب</a>
+        </header>
+
+        <section class="hero">
+            <div class="hero-content">
+                <h1>الحل الأمثل للمعادلات الرياضية المعقدة</h1>
+                <p>حاسبة علمية متطورة وسريعة، تدعم جميع العمليات الحسابية والدوال المثلثية بتصميم عصري وأنيق.</p>
+                <div
+                    style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; @media(min-width: 769px){justify-content: flex-start;}">
+                    <a href="/calculator" class="cta-button">جرب الحاسبة الآن</a>
+                    <a href="#features"
+                        style="padding: 12px 24px; color: var(--text-light); text-decoration: none;">تعرف على المزايا
+                        ↓</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="calc-mockup">
+                    <div style="background:var(--bg-light); border-radius:12px; padding:15px; margin-bottom:15px;">
+                        <div style="height:10px; width:40%; background:#dfe6e9; margin-bottom:10px; border-radius:4px;">
+                        </div>
+                        <div style="height:24px; width:80%; background:#2d3436; border-radius:4px;"></div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+                        <div style="aspect-ratio:1; background:#f1f2f6; border-radius:8px;"></div>
+                        <div style="aspect-ratio:1; background:#f1f2f6; border-radius:8px;"></div>
+                        <div style="aspect-ratio:1; background:#f1f2f6; border-radius:8px;"></div>
+                        <div style="aspect-ratio:1; background:#0984e3; border-radius:8px; opacity:0.2;"></div>
+
+                        <div style="aspect-ratio:1; background:#f1f2f6; border-radius:8px;"></div>
+                        <div style="aspect-ratio:1; background:#f1f2f6; border-radius:8px;"></div>
+                        <div style="aspect-ratio:1; background:#f1f2f6; border-radius:8px;"></div>
+                        <div style="aspect-ratio:1; background:#0984e3; border-radius:8px;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2 class="section-title">لماذا تختار حاسبتنا؟</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon">🚀</div>
+                    <h3>سرعة فائقة</h3>
+                    <p>أداء فوري وحسابات معقدة في أجزاء من الثانية بفضل التقنيات الحديثة.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📐</div>
+                    <h3>دوال علمية شاملة</h3>
+                    <p>دعم كامل للدوال المثلثية، اللوغاريتمات، الأسس، والمزيد.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📱</div>
+                    <h3>تصميم متجاوب</h3>
+                    <p>تجربة مستخدم مثالية على جميع الأجهزة، من الجوال إلى سطح المكتب.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2024 حاسبة.برو - جميع الحقوق محفوظة</p>
+        </footer>
+    </div>
+</body>
+
+</html>
