@@ -314,8 +314,10 @@
                         </td>
                         <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
                         <td>
-                            {% if user.id != current_user.id %}
                             <div class="actions">
+                                <a href="/dashboard/edit/{{ user.id }}" class="btn-small"
+                                    style="background: rgba(9, 132, 227, 0.1); color: var(--primary); text-decoration: none;">تعديل</a>
+                                {% if user.id != current_user.id %}
                                 <form action="/dashboard/toggle-admin/{{ user.id }}" method="POST"
                                     style="display:inline;">
                                     <button type="submit" class="btn-small toggle">
@@ -326,10 +328,8 @@
                                     onsubmit="return confirm('هل أنت متأكد من حذف هذا المستخدم؟');">
                                     <button type="submit" class="btn-small delete">حذف</button>
                                 </form>
+                                {% endif %}
                             </div>
-                            {% else %}
-                            <span style="color: var(--text-light); font-size: 12px;">أنت</span>
-                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

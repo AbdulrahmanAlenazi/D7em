@@ -4,6 +4,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from functools import wraps
+import re
 import os
 
 app = Flask(__name__)
@@ -16,10 +17,31 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'يرجى تسجيل الدخول للوصول لهذه الصفحة'
 
+# Email validation regex
+EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+
+def normalize_email(email):
+    """Normalize email to lowercase for consistent storage and lookup"""
+    return email.strip().lower() if email else None
+
+def validate_email(email):
+    """Validate email format"""
+    return EMAIL_REGEX.match(email) is not None
+
+def validate_password(password):
+    """Validate password strength: min 8 chars, 1 letter, 1 number"""
+    if len(password) < 8:
+        return False, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل'
+    if not re.search(r'[a-zA-Z]', password):
+        return False, 'كلمة المرور يجب أن تحتوي على حرف واحد على الأقل'
+    if not re.search(r'\d', password):
+        return False, 'كلمة المرور يجب أن تحتوي على رقم واحد على الأقل'
+    return True, None
+
 # User Model
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
@@ -64,12 +86,17 @@ def login():
         return redirect(url_for('calculator'))
     
     if request.method == 'POST':
-        email = request.form.get('email')
+        email = normalize_email(request.form.get('email'))
         password = request.form.get('password')
+        
+        if not email or not password:
+            flash('يرجى ملء جميع الحقول', 'error')
+            return render_template('login.html')
+        
         user = User.query.filter_by(email=email).first()
         
         if user and user.check_password(password):
-            login_user(user)
+            login_user(user, remember=True)
             next_page = request.args.get('next')
             flash('تم تسجيل الدخول بنجاح!', 'success')
             return redirect(next_page or url_for('calculator'))
@@ -84,13 +111,27 @@ def signup():
         return redirect(url_for('calculator'))
     
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
+        name = request.form.get('name', '').strip()
+        email = normalize_email(request.form.get('email'))
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        
+        # Validation
+        if not name or len(name) < 2:
+            flash('الاسم يجب أن يكون حرفين على الأقل', 'error')
+            return render_template('signup.html')
+        
+        if not email or not validate_email(email):
+            flash('يرجى إدخال بريد إلكتروني صحيح', 'error')
+            return render_template('signup.html')
         
         if password != confirm_password:
             flash('كلمات المرور غير متطابقة', 'error')
+            return render_template('signup.html')
+        
+        is_valid, error_msg = validate_password(password)
+        if not is_valid:
+            flash(error_msg, 'error')
             return render_template('signup.html')
         
         if User.query.filter_by(email=email).first():
@@ -105,7 +146,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
         
-        login_user(user)
+        login_user(user, remember=True)
         flash('تم إنشاء الحساب بنجاح!', 'success')
         return redirect(url_for('calculator'))
     
@@ -132,6 +173,57 @@ def dashboard():
         ).count()
     }
     return render_template('dashboard.html', users=users, stats=stats)
+
+@app.route('/dashboard/edit/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+    
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        email = normalize_email(request.form.get('email'))
+        new_password = request.form.get('new_password', '')
+        is_admin = request.form.get('is_admin') == 'on'
+        
+        # Validation
+        if not name or len(name) < 2:
+            flash('الاسم يجب أن يكون حرفين على الأقل', 'error')
+            return render_template('edit_user.html', user=user)
+        
+        if not email or not validate_email(email):
+            flash('يرجى إدخال بريد إلكتروني صحيح', 'error')
+            return render_template('edit_user.html', user=user)
+        
+        # Check if email is taken by another user
+        existing = User.query.filter_by(email=email).first()
+        if existing and existing.id != user_id:
+            flash('البريد الإلكتروني مستخدم من قبل مستخدم آخر', 'error')
+            return render_template('edit_user.html', user=user)
+        
+        # Can't remove own admin status
+        if user_id == current_user.id and not is_admin:
+            flash('لا يمكنك إزالة صلاحيات المسؤول من نفسك', 'error')
+            return render_template('edit_user.html', user=user)
+        
+        # Update user
+        user.name = name
+        user.email = email
+        user.is_admin = is_admin
+        
+        # Update password if provided
+        if new_password:
+            is_valid, error_msg = validate_password(new_password)
+            if not is_valid:
+                flash(error_msg, 'error')
+                return render_template('edit_user.html', user=user)
+            user.set_password(new_password)
+        
+        db.session.commit()
+        flash(f'تم تحديث بيانات {user.name} بنجاح', 'success')
+        return redirect(url_for('dashboard'))
+    
+    return render_template('edit_user.html', user=user)
 
 @app.route('/dashboard/delete/<int:user_id>', methods=['POST'])
 @login_required
