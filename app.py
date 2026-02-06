@@ -383,11 +383,45 @@ HTML_TEMPLATE = '''
             color: var(--text-primary);
         }
 
-        @media (max-width: 440px) {
-            .calculator { width: 100%; border-radius: 20px; }
-            .result { font-size: 34px; }
-            button.calc-btn { padding: 12px 4px; font-size: 13px; }
-            button.calc-btn.func { font-size: 11px; }
+        @media (max-width: 480px) {
+            .calculator-wrapper {
+                padding: 10px;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+            }
+            .calculator {
+                width: 100%;
+                border-radius: 24px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            }
+            .result {
+                font-size: 40px;
+                padding-right: 4px;
+            }
+            .buttons-container {
+                padding: 0 16px 20px;
+            }
+            .btn-grid {
+                gap: 8px;
+            }
+            button.calc-btn {
+                padding: 16px 0;
+                font-size: 18px;
+                border-radius: 14px;
+            }
+            button.calc-btn.func {
+                font-size: 13px;
+                padding: 12px 0;
+            }
+            .mode-tabs {
+                padding: 0 16px;
+                margin-bottom: 16px;
+            }
+            .mode-tab {
+                padding: 10px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
