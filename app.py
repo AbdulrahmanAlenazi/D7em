@@ -16,6 +16,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'يرجى تسجيل الدخول للوصول لهذه الصفحة'
+login_manager.login_message_category = 'error'
 
 # Email validation regex
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
@@ -158,6 +159,47 @@ def logout():
     logout_user()
     flash('تم تسجيل الخروج بنجاح', 'success')
     return redirect(url_for('index'))
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        email = normalize_email(request.form.get('email'))
+        current_password = request.form.get('current_password', '')
+        new_password = request.form.get('new_password', '')
+
+        if not name or len(name) < 2:
+            flash('الاسم يجب أن يكون حرفين على الأقل', 'error')
+            return render_template('profile.html')
+
+        if not email or not validate_email(email):
+            flash('يرجى إدخال بريد إلكتروني صحيح', 'error')
+            return render_template('profile.html')
+
+        existing = User.query.filter_by(email=email).first()
+        if existing and existing.id != current_user.id:
+            flash('البريد الإلكتروني مستخدم من قبل مستخدم آخر', 'error')
+            return render_template('profile.html')
+
+        current_user.name = name
+        current_user.email = email
+
+        if new_password:
+            if not current_password or not current_user.check_password(current_password):
+                flash('كلمة المرور الحالية غير صحيحة', 'error')
+                return render_template('profile.html')
+            is_valid, error_msg = validate_password(new_password)
+            if not is_valid:
+                flash(error_msg, 'error')
+                return render_template('profile.html')
+            current_user.set_password(new_password)
+
+        db.session.commit()
+        flash('تم تحديث بياناتك بنجاح', 'success')
+        return redirect(url_for('profile'))
+
+    return render_template('profile.html')
 
 # Dashboard Routes
 @app.route('/dashboard')

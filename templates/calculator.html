@@ -2,133 +2,159 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الحاسبة العلمية | Scientific Calculator</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>الحاسبة العلمية | حاسبة.برو</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #f8f9fa;
-            --bg-secondary: #ffffff;
-            --text-primary: #2d3436;
-            --text-secondary: #636e72;
-            --accent-primary: #0984e3;
-            --accent-secondary: #00b894;
-            --accent-warning: #ff7675;
-            --border-color: #dfe6e9;
-            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
-            --shadow-hover: 0 15px 35px rgba(9, 132, 227, 0.15);
-            --btn-bg: #f1f2f6;
-            --btn-hover: #e6e8ec;
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-btn: rgba(255, 255, 255, 0.05);
+            --bg-btn-hover: rgba(255, 255, 255, 0.1);
+            --accent: #6c5ce7;
+            --accent-light: #a29bfe;
+            --accent-glow: rgba(108, 92, 231, 0.3);
+            --green: #00cec9;
+            --green-glow: rgba(0, 206, 201, 0.3);
+            --red: #ff6b6b;
+            --text: #e8e8f0;
+            --text-dim: #7f8c9b;
+            --border: rgba(255, 255, 255, 0.06);
+            --gradient: linear-gradient(135deg, #6c5ce7, #00cec9);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            outline: none;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'IBM Plex Sans Arabic', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: var(--bg-dark);
+            color: var(--text);
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             overflow: hidden;
             position: relative;
         }
 
-        /* Subtle background pattern */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: radial-gradient(#dfe6e9 1px, transparent 1px);
-            background-size: 24px 24px;
-            opacity: 0.4;
-            z-index: -1;
-        }
-
-        .calculator-wrapper {
-            padding: 20px;
-            z-index: 10;
-        }
-
-        .calculator {
-            width: 420px;
-            max-width: 95vw;
-            background: var(--bg-secondary);
-            border-radius: 24px;
-            box-shadow: var(--shadow-soft);
-            overflow: hidden;
-            border: 1px solid white;
-            transition: transform 0.3s ease;
-        }
-
-        .header {
-            padding: 20px 24px 10px;
+        /* Top bar */
+        .topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 12px 20px;
+            flex-shrink: 0;
         }
 
-        .header h1 {
+        .topbar-logo {
             font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
         }
 
-        .mode-indicator {
-            font-size: 11px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            background: rgba(9, 132, 227, 0.1);
-            color: var(--accent-primary);
-            font-weight: 600;
-            letter-spacing: 1px;
+        .topbar-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
 
+        .topbar-actions a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 10px;
+            transition: all 0.2s;
+            background: var(--bg-btn);
+            border: 1px solid var(--border);
+        }
+        .topbar-actions a:hover { color: var(--text); background: var(--bg-btn-hover); }
+
+        /* Calculator body */
+        .calc-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 12px;
+            overflow: hidden;
+        }
+
+        /* Display */
         .display {
-            padding: 10px 24px 24px;
-            background: var(--bg-secondary);
+            flex-shrink: 0;
+            padding: 16px 20px 20px;
+            text-align: left;
+            direction: ltr;
         }
 
         .expression {
             font-family: 'JetBrains Mono', monospace;
             font-size: 14px;
-            color: var(--text-secondary);
-            text-align: left;
-            direction: ltr;
-            min-height: 20px;
-            margin-bottom: 4px;
-            opacity: 0.8;
+            color: var(--text-dim);
+            min-height: 22px;
+            margin-bottom: 6px;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
         }
+        .expression::-webkit-scrollbar { display: none; }
 
         .result {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 48px;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-align: left;
-            direction: ltr;
+            font-size: clamp(36px, 10vw, 52px);
+            font-weight: 700;
+            color: var(--text);
             white-space: nowrap;
             overflow-x: auto;
             scrollbar-width: none;
+            transition: color 0.2s;
         }
-
         .result::-webkit-scrollbar { display: none; }
+        .result.computing { color: var(--accent-light); }
 
-        .result.computing {
-            color: var(--accent-primary);
+        /* Mode tabs */
+        .mode-section {
+            display: flex;
+            gap: 8px;
+            padding: 0 8px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
         }
 
+        .mode-tab {
+            flex: 1;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            background: var(--bg-btn);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .mode-tab.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        /* Memory bar */
         .memory-bar {
             display: flex;
             gap: 6px;
-            padding: 0 24px 16px;
+            padding: 0 8px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
         }
 
         .memory-bar button {
@@ -137,339 +163,307 @@
             font-size: 11px;
             font-weight: 600;
             font-family: 'JetBrains Mono', monospace;
-            background: rgba(0, 184, 148, 0.05);
-            color: var(--accent-secondary);
-            border: 1px solid transparent;
+            background: rgba(0, 206, 201, 0.08);
+            color: var(--green);
+            border: 1px solid rgba(0, 206, 201, 0.15);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
         }
+        .memory-bar button:hover { background: rgba(0, 206, 201, 0.15); }
 
-        .memory-bar button:hover {
-            background: rgba(0, 184, 148, 0.1);
-        }
-
-        .mode-tabs {
-            display: flex;
-            padding: 0 24px;
-            gap: 6px;
-            margin-bottom: 16px;
-        }
-
-        .mode-tab {
+        /* Buttons */
+        .buttons-area {
             flex: 1;
-            padding: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            background: var(--btn-bg);
-            color: var(--text-secondary);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'IBM Plex Sans Arabic', sans-serif;
-        }
-
-        .mode-tab.active {
-            background: var(--text-primary);
-            color: white;
-            box-shadow: 0 4px 12px rgba(45, 52, 54, 0.2);
-        }
-
-        .buttons-container {
-            padding: 0 16px 20px;
+            display: flex;
+            flex-direction: column;
+            padding: 0 8px 12px;
+            min-height: 0;
         }
 
         .btn-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            gap: 8px;
+            flex: 1;
         }
 
-        .btn-grid.basic-grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
+        .btn-grid.scientific { grid-template-columns: repeat(5, 1fr); }
+        .btn-grid.basic { grid-template-columns: repeat(4, 1fr); }
 
         button.calc-btn {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 18px;
+            font-size: clamp(14px, 3.5vw, 18px);
             font-weight: 500;
-            padding: 16px 0;
+            padding: 0;
             border: none;
-            border-radius: 16px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-            background: var(--btn-bg);
-            color: var(--text-primary);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-
-        button.calc-btn:hover {
-            background: var(--btn-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            transition: all 0.15s;
+            background: var(--bg-btn);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
         }
 
         button.calc-btn:active {
-            transform: scale(0.96);
+            transform: scale(0.94);
+            background: var(--bg-btn-hover);
         }
 
         button.calc-btn.operator {
-            background: rgba(9, 132, 227, 0.1);
-            color: var(--accent-primary);
+            background: rgba(108, 92, 231, 0.12);
+            color: var(--accent-light);
+            border-color: rgba(108, 92, 231, 0.2);
         }
-
-        button.calc-btn.operator:hover {
-            background: rgba(9, 132, 227, 0.2);
-            box-shadow: var(--shadow-hover);
-        }
+        button.calc-btn.operator:active { background: rgba(108, 92, 231, 0.25); }
 
         button.calc-btn.func {
-            background: white;
-            color: var(--text-secondary);
-            font-size: 13px;
-            border: 1px solid var(--border-color);
-            box-shadow: none;
+            background: transparent;
+            color: var(--text-dim);
+            font-size: clamp(11px, 2.8vw, 13px);
+            border-color: var(--border);
         }
-
-        button.calc-btn.func:hover {
-            border-color: var(--text-secondary);
-            color: var(--text-primary);
-        }
+        button.calc-btn.func:active { background: var(--bg-btn); color: var(--text); }
 
         button.calc-btn.equals {
-            background: var(--accent-primary);
+            background: var(--gradient);
             color: white;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(9, 132, 227, 0.3);
+            font-weight: 700;
+            border: none;
+            box-shadow: 0 4px 15px var(--accent-glow);
         }
-
-        button.calc-btn.equals:hover {
-            background: #0870c0;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(9, 132, 227, 0.4);
+        button.calc-btn.equals:active {
+            transform: scale(0.94);
+            box-shadow: 0 2px 8px var(--accent-glow);
         }
 
         button.calc-btn.clear {
-            background: rgba(255, 118, 117, 0.1);
-            color: var(--accent-warning);
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--red);
+            border-color: rgba(255, 107, 107, 0.15);
         }
+        button.calc-btn.clear:active { background: rgba(255, 107, 107, 0.2); }
 
-        button.calc-btn.clear:hover {
-            background: rgba(255, 118, 117, 0.2);
-        }
+        button.calc-btn.span2 { grid-column: span 2; }
 
-        button.calc-btn.span2 {
-            grid-column: span 2;
-        }
-
-        .home-link {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-soft);
-            transition: all 0.2s;
-        }
-
-        .home-link:hover {
-            transform: translateY(-2px);
-            color: var(--accent-primary);
-        }
-
-        /* History Panel */
-        .history-panel {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-            background: #fafbfc;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .history-panel.open {
-            max-height: 200px;
-        }
-
-        .history-item {
-            padding: 10px 24px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .history-item:hover {
-            background: rgba(9, 132, 227, 0.05);
-        }
-
+        /* History */
         .history-toggle {
             width: 100%;
             padding: 10px;
             background: transparent;
             border: none;
-            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
             font-size: 12px;
             cursor: pointer;
-            border-top: 1px solid var(--border-color);
+            font-family: inherit;
+            flex-shrink: 0;
         }
 
-        @media (max-width: 480px) {
-            .calculator-wrapper {
-                padding: 0;
-                height: 100vh;
-                display: flex;
-                align-items: center;
+        .history-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+        }
+        .history-panel.open { max-height: 200px; overflow-y: auto; }
+
+        .history-item {
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            direction: ltr;
+        }
+        .history-item:hover { background: var(--bg-btn); }
+        .history-result { color: var(--accent-light); }
+
+        /* Angle indicator */
+        .angle-indicator {
+            position: absolute;
+            top: 6px;
+            left: 20px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--green);
+            background: rgba(0, 206, 201, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        /* Desktop: show as centered card */
+        @media (min-width: 600px) {
+            body {
                 justify-content: center;
+                align-items: center;
+                padding: 20px;
             }
-            .calculator {
-                width: 100%;
-                height: 100%;
-                border-radius: 0;
-                border: none;
-                box-shadow: none;
-                display: flex;
-                flex-direction: column;
+            .topbar {
+                position: fixed;
+                top: 0;
+                right: 0;
+                left: 0;
+                padding: 16px 24px;
+                z-index: 100;
             }
-            .header { padding-top: 40px; }
-            .buttons-container { margin-top: auto; padding-bottom: 30px; }
-            .history-toggle { padding-bottom: 20px; }
-            .home-link { top: 10px; right: 10px; padding: 6px 12px; font-size: 12px; z-index: 100; }
+            .calc-body {
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: 28px;
+                max-height: 700px;
+                padding: 8px 12px 12px;
+                box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        /* Mobile: full screen */
+        @media (max-width: 599px) {
+            .topbar { padding: 8px 12px; padding-top: env(safe-area-inset-top, 8px); }
+            .calc-body { padding: 0 6px; }
+            .display { padding: 8px 14px 14px; }
+            .buttons-area { padding: 0 4px 8px; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+            .btn-grid { gap: 5px; }
+            button.calc-btn { border-radius: 12px; }
+            .memory-bar { padding: 0 4px; gap: 4px; margin-bottom: 8px; }
+            .mode-section { padding: 0 4px; gap: 6px; margin-bottom: 8px; }
+        }
+
+        @media (max-width: 380px) {
+            .btn-grid { gap: 4px; }
+            button.calc-btn { border-radius: 10px; }
+            .memory-bar button { padding: 6px; font-size: 10px; }
         }
     </style>
 </head>
 <body>
-    <a href="/" class="home-link">
-        <span>الرئيسية</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-    </a>
+    <div class="topbar">
+        <a href="/" class="topbar-logo">حاسبة.برو</a>
+        <div class="topbar-actions">
+            {% if current_user.is_authenticated %}
+            <a href="/profile">حسابي</a>
+            {% endif %}
+            <a href="/">الرئيسية</a>
+        </div>
+    </div>
 
-    <div class="calculator-wrapper">
-        <div class="calculator">
-            <div class="header">
-                <h1>حاسبة علمية</h1>
-                <span class="mode-indicator" id="modeLabel">RAD</span>
+    <div class="calc-body">
+        <div class="display" style="position: relative;">
+            <span class="angle-indicator" id="modeLabel">RAD</span>
+            <div class="expression" id="expression"></div>
+            <div class="result" id="result">0</div>
+        </div>
+
+        <div class="mode-section">
+            <button class="mode-tab active" onclick="switchMode('scientific', this)">علمية</button>
+            <button class="mode-tab" onclick="switchMode('basic', this)">أساسية</button>
+        </div>
+
+        <div class="memory-bar">
+            <button onclick="memoryClear()">MC</button>
+            <button onclick="memoryRecall()">MR</button>
+            <button onclick="memoryAdd()">M+</button>
+            <button onclick="memorySub()">M-</button>
+            <button onclick="memoryStore()">MS</button>
+        </div>
+
+        <div class="buttons-area">
+            <!-- Scientific Mode -->
+            <div class="btn-grid scientific" id="scientificGrid">
+                <button class="calc-btn func" onclick="toggleAngle()" id="angleBtn">RAD</button>
+                <button class="calc-btn func" onclick="appendFunc('sin(')">sin</button>
+                <button class="calc-btn func" onclick="appendFunc('cos(')">cos</button>
+                <button class="calc-btn func" onclick="appendFunc('tan(')">tan</button>
+                <button class="calc-btn func" onclick="appendFunc('log(')">log</button>
+
+                <button class="calc-btn func" onclick="toggleInverse()">INV</button>
+                <button class="calc-btn func" onclick="appendFunc('asin(')">sin&#8315;&#185;</button>
+                <button class="calc-btn func" onclick="appendFunc('acos(')">cos&#8315;&#185;</button>
+                <button class="calc-btn func" onclick="appendFunc('atan(')">tan&#8315;&#185;</button>
+                <button class="calc-btn func" onclick="appendFunc('ln(')">ln</button>
+
+                <button class="calc-btn func" onclick="append('\u03C0')">&#960;</button>
+                <button class="calc-btn func" onclick="append('e')">e</button>
+                <button class="calc-btn func" onclick="appendFunc('\u221A(')">&#8730;</button>
+                <button class="calc-btn func" onclick="append('^')">x&#696;</button>
+                <button class="calc-btn func" onclick="appendFunc('abs(')">|x|</button>
+
+                <button class="calc-btn func" onclick="append('(')">(</button>
+                <button class="calc-btn func" onclick="append(')')">)</button>
+                <button class="calc-btn func" onclick="append('!')">n!</button>
+                <button class="calc-btn func" onclick="append('%')">%</button>
+                <button class="calc-btn clear" onclick="clearAll()">AC</button>
+
+                <button class="calc-btn" onclick="append('7')">7</button>
+                <button class="calc-btn" onclick="append('8')">8</button>
+                <button class="calc-btn" onclick="append('9')">9</button>
+                <button class="calc-btn operator" onclick="append('\u00F7')">&#247;</button>
+                <button class="calc-btn clear" onclick="backspace()">&#9003;</button>
+
+                <button class="calc-btn" onclick="append('4')">4</button>
+                <button class="calc-btn" onclick="append('5')">5</button>
+                <button class="calc-btn" onclick="append('6')">6</button>
+                <button class="calc-btn operator" onclick="append('\u00D7')">&#215;</button>
+                <button class="calc-btn func" onclick="append('^2')">x&#178;</button>
+
+                <button class="calc-btn" onclick="append('1')">1</button>
+                <button class="calc-btn" onclick="append('2')">2</button>
+                <button class="calc-btn" onclick="append('3')">3</button>
+                <button class="calc-btn operator" onclick="append('\u2212')">&#8722;</button>
+                <button class="calc-btn func" onclick="append('^3')">x&#179;</button>
+
+                <button class="calc-btn" onclick="append('0')">0</button>
+                <button class="calc-btn" onclick="append('.')">.</button>
+                <button class="calc-btn equals" onclick="calculate()">=</button>
+                <button class="calc-btn operator" onclick="append('+')">+</button>
+                <button class="calc-btn func" onclick="append('\u00D710^')">EXP</button>
             </div>
 
-            <div class="display">
-                <div class="expression" id="expression"></div>
-                <div class="result" id="result">0</div>
+            <!-- Basic Mode -->
+            <div class="btn-grid basic" id="basicGrid" style="display:none;">
+                <button class="calc-btn clear" onclick="clearAll()">AC</button>
+                <button class="calc-btn clear" onclick="backspace()">&#9003;</button>
+                <button class="calc-btn operator" onclick="append('%')">%</button>
+                <button class="calc-btn operator" onclick="append('\u00F7')">&#247;</button>
+
+                <button class="calc-btn" onclick="append('7')">7</button>
+                <button class="calc-btn" onclick="append('8')">8</button>
+                <button class="calc-btn" onclick="append('9')">9</button>
+                <button class="calc-btn operator" onclick="append('\u00D7')">&#215;</button>
+
+                <button class="calc-btn" onclick="append('4')">4</button>
+                <button class="calc-btn" onclick="append('5')">5</button>
+                <button class="calc-btn" onclick="append('6')">6</button>
+                <button class="calc-btn operator" onclick="append('\u2212')">&#8722;</button>
+
+                <button class="calc-btn" onclick="append('1')">1</button>
+                <button class="calc-btn" onclick="append('2')">2</button>
+                <button class="calc-btn" onclick="append('3')">3</button>
+                <button class="calc-btn operator" onclick="append('+')">+</button>
+
+                <button class="calc-btn span2" onclick="append('0')">0</button>
+                <button class="calc-btn" onclick="append('.')">.</button>
+                <button class="calc-btn equals" onclick="calculate()">=</button>
             </div>
+        </div>
 
-            <div class="memory-bar">
-                <button onclick="memoryClear()">MC</button>
-                <button onclick="memoryRecall()">MR</button>
-                <button onclick="memoryAdd()">M+</button>
-                <button onclick="memorySub()">M−</button>
-                <button onclick="memoryStore()">MS</button>
-            </div>
-
-            <div class="mode-tabs">
-                <button class="mode-tab active" onclick="switchMode('scientific', this)">علمية</button>
-                <button class="mode-tab" onclick="switchMode('basic', this)">أساسية</button>
-            </div>
-
-            <div class="buttons-container">
-                <!-- Scientific Mode -->
-                <div class="btn-grid" id="scientificGrid">
-                    <button class="calc-btn func" onclick="toggleAngle()">RAD</button>
-                    <button class="calc-btn func" onclick="appendFunc('sin(')">sin</button>
-                    <button class="calc-btn func" onclick="appendFunc('cos(')">cos</button>
-                    <button class="calc-btn func" onclick="appendFunc('tan(')">tan</button>
-                    <button class="calc-btn func" onclick="appendFunc('log(')">log</button>
-
-                    <button class="calc-btn func" onclick="toggleInverse()">INV</button>
-                    <button class="calc-btn func" id="sinBtn" onclick="appendFunc('asin(')">sin⁻¹</button>
-                    <button class="calc-btn func" id="cosBtn" onclick="appendFunc('acos(')">cos⁻¹</button>
-                    <button class="calc-btn func" id="tanBtn" onclick="appendFunc('atan(')">tan⁻¹</button>
-                    <button class="calc-btn func" onclick="appendFunc('ln(')">ln</button>
-
-                    <button class="calc-btn func" onclick="append('π')">π</button>
-                    <button class="calc-btn func" onclick="append('e')">e</button>
-                    <button class="calc-btn func" onclick="appendFunc('√(')">√</button>
-                    <button class="calc-btn func" onclick="append('^')">xʸ</button>
-                    <button class="calc-btn func" onclick="appendFunc('abs(')">|x|</button>
-
-                    <button class="calc-btn func" onclick="append('(')"> (</button>
-                    <button class="calc-btn func" onclick="append(')')">)</button>
-                    <button class="calc-btn func" onclick="append('!')">n!</button>
-                    <button class="calc-btn func" onclick="append('%')">%</button>
-                    <button class="calc-btn clear" onclick="clearAll()">AC</button>
-
-                    <button class="calc-btn number" onclick="append('7')">7</button>
-                    <button class="calc-btn number" onclick="append('8')">8</button>
-                    <button class="calc-btn number" onclick="append('9')">9</button>
-                    <button class="calc-btn operator" onclick="append('÷')">÷</button>
-                    <button class="calc-btn clear" onclick="backspace()">⌫</button>
-
-                    <button class="calc-btn number" onclick="append('4')">4</button>
-                    <button class="calc-btn number" onclick="append('5')">5</button>
-                    <button class="calc-btn number" onclick="append('6')">6</button>
-                    <button class="calc-btn operator" onclick="append('×')">×</button>
-                    <button class="calc-btn func" onclick="append('^2')">x²</button>
-
-                    <button class="calc-btn number" onclick="append('1')">1</button>
-                    <button class="calc-btn number" onclick="append('2')">2</button>
-                    <button class="calc-btn number" onclick="append('3')">3</button>
-                    <button class="calc-btn operator" onclick="append('−')">−</button>
-                    <button class="calc-btn func" onclick="append('^3')">x³</button>
-
-                    <button class="calc-btn number" onclick="append('0')">0</button>
-                    <button class="calc-btn number" onclick="append('.')">.</button>
-                    <button class="calc-btn equals" onclick="calculate()">=</button>
-                    <button class="calc-btn operator" onclick="append('+')">+</button>
-                    <button class="calc-btn func" onclick="append('×10^')">EXP</button>
-                </div>
-
-                <!-- Basic Mode -->
-                <div class="btn-grid basic-grid" id="basicGrid" style="display:none;">
-                    <button class="calc-btn clear" onclick="clearAll()">AC</button>
-                    <button class="calc-btn clear" onclick="backspace()">⌫</button>
-                    <button class="calc-btn operator" onclick="append('%')">%</button>
-                    <button class="calc-btn operator" onclick="append('÷')">÷</button>
-
-                    <button class="calc-btn number" onclick="append('7')">7</button>
-                    <button class="calc-btn number" onclick="append('8')">8</button>
-                    <button class="calc-btn number" onclick="append('9')">9</button>
-                    <button class="calc-btn operator" onclick="append('×')">×</button>
-
-                    <button class="calc-btn number" onclick="append('4')">4</button>
-                    <button class="calc-btn number" onclick="append('5')">5</button>
-                    <button class="calc-btn number" onclick="append('6')">6</button>
-                    <button class="calc-btn operator" onclick="append('−')">−</button>
-
-                    <button class="calc-btn number" onclick="append('1')">1</button>
-                    <button class="calc-btn number" onclick="append('2')">2</button>
-                    <button class="calc-btn number" onclick="append('3')">3</button>
-                    <button class="calc-btn operator" onclick="append('+')">+</button>
-
-                    <button class="calc-btn number span2" onclick="append('0')">0</button>
-                    <button class="calc-btn number" onclick="append('.')">.</button>
-                    <button class="calc-btn equals" onclick="calculate()">=</button>
-                </div>
-            </div>
-
-            <button class="history-toggle" onclick="toggleHistory()">
-                📜 سجل العمليات
-            </button>
-            <div class="history-panel" id="historyPanel">
-                <div class="history-panel-inner" id="historyList"></div>
-            </div>
+        <button class="history-toggle" onclick="toggleHistory()">
+            &#128220; سجل العمليات
+        </button>
+        <div class="history-panel" id="historyPanel">
+            <div id="historyList"></div>
         </div>
     </div>
 
     <script>
-        // Exact same logic as before
         let expression = '';
         let currentResult = '0';
         let memory = 0;
@@ -505,7 +499,7 @@
         }
 
         function backspace() {
-            const funcs = ['sin(', 'cos(', 'tan(', 'asin(', 'acos(', 'atan(', 'log(', 'ln(', 'abs(', '√(', '×10^'];
+            const funcs = ['sin(', 'cos(', 'tan(', 'asin(', 'acos(', 'atan(', 'log(', 'ln(', 'abs(', '\u221A(', '\u00D710^'];
             for (let f of funcs) {
                 if (expression.endsWith(f)) {
                     expression = expression.slice(0, -f.length);
@@ -521,13 +515,13 @@
 
         function toggleAngle() {
             isRadians = !isRadians;
-            document.getElementById('modeLabel').textContent = isRadians ? 'RAD' : 'DEG';
-            document.querySelector('.btn-grid .func').textContent = isRadians ? 'RAD' : 'DEG';
+            const label = isRadians ? 'RAD' : 'DEG';
+            document.getElementById('modeLabel').textContent = label;
+            document.getElementById('angleBtn').textContent = label;
         }
 
         function toggleInverse() {
             isInverse = !isInverse;
-            // Additional logic for visual feedback if needed
         }
 
         function factorial(n) {
@@ -541,10 +535,10 @@
 
         function preprocessExpression(expr) {
             let e = expr;
-            e = e.replace(/×/g, '*');
-            e = e.replace(/÷/g, '/');
-            e = e.replace(/−/g, '-');
-            e = e.replace(/π/g, '(' + Math.PI + ')');
+            e = e.replace(/\u00D7/g, '*');
+            e = e.replace(/\u00F7/g, '/');
+            e = e.replace(/\u2212/g, '-');
+            e = e.replace(/\u03C0/g, '(' + Math.PI + ')');
             e = e.replace(/(?<![a-zA-Z])e(?![a-zA-Z^+\-\d])/g, '(' + Math.E + ')');
             e = e.replace(/\^/g, '**');
             e = e.replace(/(\d+)!/g, (_, n) => factorial(parseInt(n)));
@@ -565,9 +559,9 @@
             e = e.replace(/atan\(/g, 'Math.atan(');
             e = e.replace(/log\(/g, 'Math.log10(');
             e = e.replace(/ln\(/g, 'Math.log(');
-            e = e.replace(/√\(/g, 'Math.sqrt(');
+            e = e.replace(/\u221A\(/g, 'Math.sqrt(');
             e = e.replace(/abs\(/g, 'Math.abs(');
-            e = e.replace(/×10\*\*/g, '*10**');
+            e = e.replace(/\u00D710\*\*/g, '*10**');
 
             return e;
         }
@@ -584,10 +578,10 @@
                 let open = (processed.match(/\(/g) || []).length;
                 let close = (processed.match(/\)/g) || []).length;
                 processed += ')'.repeat(Math.max(0, open - close));
-                
+
                 if (!isRadians) {
-                     let extra = (processed.match(/Math\.PI\/180\*\(/g) || []).length;
-                     processed += ')'.repeat(extra);
+                    let extra = (processed.match(/Math\.PI\/180\*\(/g) || []).length;
+                    processed += ')'.repeat(extra);
                 }
 
                 let result = Function('"use strict"; return (' + processed + ')')();
@@ -610,10 +604,10 @@
                 let open = (processed.match(/\(/g) || []).length;
                 let close = (processed.match(/\)/g) || []).length;
                 processed += ')'.repeat(Math.max(0, open - close));
-                
+
                 if (!isRadians) {
-                     let extra = (processed.match(/Math\.PI\/180\*\(/g) || []).length;
-                     processed += ')'.repeat(extra);
+                    let extra = (processed.match(/Math\.PI\/180\*\(/g) || []).length;
+                    processed += ')'.repeat(extra);
                 }
 
                 let result = Function('"use strict"; return (' + processed + ')')();
@@ -626,15 +620,15 @@
                     currentResult = formatted;
                     resultEl.classList.remove('computing');
                     updateDisplay();
-                    
-                    resultEl.style.transform = 'scale(1.05)';
+
+                    resultEl.style.transform = 'scale(1.03)';
                     setTimeout(() => resultEl.style.transform = 'scale(1)', 150);
                 } else {
-                    currentResult = 'خطأ';
+                    currentResult = '\u062E\u0637\u0623';
                     updateDisplay();
                 }
             } catch {
-                currentResult = 'خطأ';
+                currentResult = '\u062E\u0637\u0623';
                 updateDisplay();
             }
         }
@@ -649,18 +643,9 @@
 
         function memoryClear() { memory = 0; }
         function memoryRecall() { if (memory !== 0) append(memory.toString()); }
-        function memoryAdd() {
-            let val = parseFloat(currentResult);
-            if (!isNaN(val)) memory += val;
-        }
-        function memorySub() {
-            let val = parseFloat(currentResult);
-            if (!isNaN(val)) memory -= val;
-        }
-        function memoryStore() {
-            let val = parseFloat(currentResult);
-            if (!isNaN(val)) memory = val;
-        }
+        function memoryAdd() { let val = parseFloat(currentResult); if (!isNaN(val)) memory += val; }
+        function memorySub() { let val = parseFloat(currentResult); if (!isNaN(val)) memory -= val; }
+        function memoryStore() { let val = parseFloat(currentResult); if (!isNaN(val)) memory = val; }
 
         function switchMode(mode, btn) {
             document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
@@ -682,7 +667,7 @@
             const list = document.getElementById('historyList');
             list.innerHTML = history.map(h =>
                 `<div class="history-item" onclick="useHistory('${h.result}')">
-                    <span class="history-expr">${h.expr}</span>
+                    <span>${h.expr}</span>
                     <span class="history-result">= ${h.result}</span>
                 </div>`
             ).join('');
@@ -698,9 +683,9 @@
             const key = e.key;
             if ('0123456789.'.includes(key)) append(key);
             else if (key === '+') append('+');
-            else if (key === '-') append('−');
-            else if (key === '*') append('×');
-            else if (key === '/') { e.preventDefault(); append('÷'); }
+            else if (key === '-') append('\u2212');
+            else if (key === '*') append('\u00D7');
+            else if (key === '/') { e.preventDefault(); append('\u00F7'); }
             else if (key === '%') append('%');
             else if (key === '(' || key === ')') append(key);
             else if (key === '^') append('^');
@@ -708,6 +693,14 @@
             else if (key === 'Backspace') backspace();
             else if (key === 'Escape' || key === 'Delete') clearAll();
         });
+
+        // Prevent zoom on double-tap for iOS
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) e.preventDefault();
+            lastTouchEnd = now;
+        }, false);
     </script>
 </body>
 </html>
